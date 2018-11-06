@@ -1,0 +1,6 @@
+services:
+  menatwork_news_most_read.services.news_read_count:
+    class: MenAtWork\NewsMostReadBundle\Services\NewsReadCountService
+    arguments:
+    - "@session"
+    public: true

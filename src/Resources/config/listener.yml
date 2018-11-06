@@ -1,0 +1,6 @@
+services:
+  menatwork_news_most_read.listener.news_module:
+    class: MenAtWork\NewsMostReadBundle\EventListener\NewsListener
+    arguments:
+    - "@menatwork_news_most_read.services.news_read_count"
+    public: true
