@@ -56,6 +56,8 @@ class NewsReadCountService
      * Checks if a given news id exists in the current session bag.
      *
      * @param int $newsId The news model id.
+     *
+     * @return bool True if the news model id already exists.
      */
     public function hasItem($newsId)
     {

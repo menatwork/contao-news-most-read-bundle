@@ -40,11 +40,11 @@ class NewsListener
     public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
         if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
-            return \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset);
+            return false;
         }
 
         $news = \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
-            'order' => 'read_count desc',
+            'order' => 'read_count desc, tl_news.date desc',
         ]);
 
         return $news;

@@ -28,7 +28,7 @@ class Plugin implements BundlePluginInterface
         return [
             BundleConfig::create(NewsMostReadBundle::class)
                 ->setLoadAfter([ ContaoNewsBundle::class ])
-                ->setReplace([ 'faq' ]),
+                ->setReplace([ 'newsMostReadBundle' ]),
         ];
     }
 }
