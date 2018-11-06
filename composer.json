@@ -1,7 +1,7 @@
 {
   "name": "menatwork/contao-news-most-read-bundle",
   "type": "contao-bundle",
-  "description": "Extends the news list element to display only the most read news entries.",
+  "description": "Extends the news list element with an sort by most read option.",
   "license": "LGPL-3.0-or-later",
   "version": "1.0.0",
   "authors": [
