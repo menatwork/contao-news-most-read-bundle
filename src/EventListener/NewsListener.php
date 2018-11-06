@@ -11,6 +11,7 @@
 namespace MenAtWork\NewsMostReadBundle\EventListener;
 
 
+use Contao\ModuleNews;
 use Contao\NewsModel;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
@@ -25,12 +26,28 @@ class NewsListener
         $this->newsReadCountService = $newsReadCountService;
     }
 
-
-    public function onNewsListCountItems($newsArchives, $blnFeatured, $objNewsList)
+    /**
+     * Reorders the fetched news items collection by news_read_count descanding.
+     *
+     * @param array      $newsArchives The news archive.
+     * @param boolean    $blnFeatured  If true, return only featured news, if false, return only unfeatured news.
+     * @param integer    $intLimit     An optional limit.
+     * @param integer    $intOffset    An optional offset.
+     * @param ModuleNews $objModule    The news module object.
+     *
+     * @return \Contao\Model\Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     */
+    public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
-//        dump($newsArchives);
-//        dump($blnFeatured);
-//        dump($objNewsList);
+        if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
+            return \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset);
+        }
+
+        $news = \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+            'order' => 'read_count desc',
+        ]);
+
+        return $news;
     }
 
     /**

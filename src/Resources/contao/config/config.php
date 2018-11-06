@@ -12,4 +12,4 @@
  * Register news list hooks
  */
 $GLOBALS['TL_HOOKS']['parseArticles'][]      = [ 'menatwork_news_most_read.listener.news_module', 'onParseArticles' ];
-$GLOBALS['TL_HOOKS']['newsListCountItems'][] = [ 'menatwork_news_most_read.listener.news_module', 'onNewsListCountItems' ];
+$GLOBALS['TL_HOOKS']['newsListFetchItems'][] = [ 'menatwork_news_most_read.listener.news_module', 'onNewsListFetchItems' ];
