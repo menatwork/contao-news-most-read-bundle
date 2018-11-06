@@ -1,0 +1,41 @@
+{
+  "name": "menatwork/contao-news-most-read-bundle",
+  "type": "contao-bundle",
+  "description": "Extends the news list element to display only the most read news entries.",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Sven Meierhans - MEN AT WORK Werbeagentur GmbH",
+      "homepage": "https://www.men-at-work.de",
+      "email": "meierhans@men-at-work.de",
+      "role": "developer"
+    }
+  ],
+  "require": {
+    "php": "^5.6 || ^7.0",
+    "contao/core-bundle": "^4.4"
+  },
+  "conflict": {
+    "contao/core": "*"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-4.4": "4.4.x-dev"
+    },
+    "contao-manager-plugin": "MenAtWork\\NewsMostReadBundle\\ContaoManager\\Plugin"
+  },
+  "autoload": {
+    "psr-4": {
+      "MenAtWork\\NewsMostReadBundle\\": "src/"
+    },
+    "classmap": [
+      "src/Resources/contao/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/languages/",
+      "src/Resources/contao/templates/"
+    ]
+  }
+}
