@@ -18,8 +18,7 @@
     "contao/core-bundle": "4.4.*"
   },
   "conflict": {
-    "contao/core": "*",
-    "contao/manager-plugin": "<2.0 || >=3.0"
+    "contao/core": "*"
   },
   "extra": {
     "contao-manager-plugin": "MenAtWork\\NewsMostReadBundle\\ContaoManager\\Plugin"
