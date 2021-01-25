@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contao - News most read bundle
  *
@@ -6,21 +7,33 @@
  *
  * @copyright  MEN AT WORK Werbeagentur GmbH 2018
  * @author     Sven Meierhans <meierhans@men-at-work.de>
+ * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
 namespace MenAtWork\NewsMostReadBundle\EventListener;
-
 
 use Contao\ModuleNews;
 use Contao\NewsModel;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 
+/**
+ * Class NewsListener
+ *
+ * @package MenAtWork\NewsMostReadBundle\EventListener
+ */
 class NewsListener
 {
-
+    /**
+     * @var NewsReadCountService
+     */
     private $newsReadCountService;
 
+    /**
+     * NewsListener constructor.
+     *
+     * @param NewsReadCountService $newsReadCountService
+     */
     public function __construct(NewsReadCountService $newsReadCountService)
     {
         $this->newsReadCountService = $newsReadCountService;
@@ -75,9 +88,23 @@ class NewsListener
             return;
         }
 
+        // Get the numeric value of the current day.
+        $currentDayId       = \date('w');
+        $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
+
         // increment news counter
         $newsModel             = NewsModel::findById($row['id']);
         $newsModel->read_count = ++$newsModel->read_count;
+
+        // Reset the value.
+        if ($newsModel->d_read_count_reset != $currentDayId) {
+            $newsModel->d_read_count_reset  = $currentDayId;
+            $newsModel->$countDayColumnName = 0;
+        }
+
+        // Set the new 7 day value.
+        $newsModel->$countDayColumnName = ++$newsModel->$countDayColumnName;
+
         $newsModel->save();
 
         // store news id in session bag
