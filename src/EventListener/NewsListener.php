@@ -123,8 +123,6 @@ class NewsListener
 
         $newsModel->save();
 
-        $this->updateTotalDailyCount($newsModel->id);
-
         // store news id in session bag
         $this->newsReadCountService->add($row['id']);
     }
