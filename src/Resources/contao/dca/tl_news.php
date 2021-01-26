@@ -18,6 +18,7 @@
         [
             'read_count',
             'd_read_count_reset',
+            'dT_read_count',
             'd0_read_count',
             'd1_read_count',
             'd2_read_count',
@@ -25,7 +26,7 @@
             'd4_read_count',
             'd5_read_count',
             'd6_read_count',
-            'd7_read_count'
+            'd7_read_count',
         ],
         'read_count_legend',
         \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND
@@ -45,6 +46,13 @@ $GLOBALS['TL_DCA']['tl_news']['fields']['read_count'] = [
 
 $GLOBALS['TL_DCA']['tl_news']['fields']['d_read_count_reset'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_news']['d_read_count_reset'],
+    'inputType' => 'text',
+    'eval'      => ['rgxp' => 'digit', 'tl_class' => 'w50'],
+    'sql'       => "int(11) unsigned NOT NULL DEFAULT '0'",
+];
+
+$GLOBALS['TL_DCA']['tl_news']['fields']['dT_read_count'] = [
+    'label'     => &$GLOBALS['TL_LANG']['tl_news']['dT_read_count'],
     'inputType' => 'text',
     'eval'      => ['rgxp' => 'digit', 'tl_class' => 'w50'],
     'sql'       => "int(11) unsigned NOT NULL DEFAULT '0'",

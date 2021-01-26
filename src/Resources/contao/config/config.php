@@ -17,4 +17,4 @@ $GLOBALS['TL_HOOKS']['newsListFetchItems'][] = [ 'menatwork_news_most_read.liste
 /**
  * Crons
  */
-$GLOBALS['TL_CRON']['hourly'][] = ['menatwork_news_most_read.services.news_read_count', 'onHourly'];
+$GLOBALS['TL_CRON']['hourly'][] = ['menatwork_news_most_read.listener.news_module', 'onHourly'];

@@ -9,12 +9,17 @@
  */
 
 $GLOBALS['TL_LANG']['tl_news']['read_count_legend']  = 'Read Counter';
-$GLOBALS['TL_LANG']['tl_news']['read_count']         = ['Count', 'Count how often the article was read.'];
+$GLOBALS['TL_LANG']['tl_news']['read_count']         = ['Count', 'Anzahl wie oft die Nachricht gelesen wurde.'];
 $GLOBALS['TL_LANG']['tl_news']['d_read_count']       = [
-    'Daily Count',
-    'Count how often the article was read.'
+    'Täglicher Count',
+    'Anzahl wie oft die Nachricht gelesen wurde.'
 ];
 $GLOBALS['TL_LANG']['tl_news']['d_read_count_reset'] = [
-    'Last reset of the daily count',
-    'Information when the last reset was.'
+    'Tag der letzten zurück setzung',
+    'Gibt an an welchen Tag der Counter das letzte mal zurück gesetzt wurde.'
 ];
+$GLOBALS['TL_LANG']['tl_news']['dT_read_count']      = [
+    '7 Tage count',
+    'Hier sehen Sie den gesamt Wert der 7 Tage.'
+];
+

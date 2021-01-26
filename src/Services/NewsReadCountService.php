@@ -74,30 +74,4 @@ class NewsReadCountService
 
         return false;
     }
-
-    /**
-     * Reset the counter of all news.
-     *
-     * Search for all news, where the 'd_read_count_reset' is not the
-     * same like the current id of the date (php: date('w')).
-     *
-     * For this entires, set the last reset to the current day and
-     * set the value of this date to 0.
-     *
-     * @return void
-     */
-    public function onHourly(): void
-    {
-        $currentDayId       = \date('w');
-        $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
-
-        $sql = \sprintf(
-            'UPDATE tl_news SET d_read_count_reset = ?, %s = 0 WHERE d_read_count_reset != ?',
-            $countDayColumnName
-        );
-
-        Database::getInstance()
-            ->prepare($sql)
-            ->execute([$currentDayId, $currentDayId]);
-    }
 }
