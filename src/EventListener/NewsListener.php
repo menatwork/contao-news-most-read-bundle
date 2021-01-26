@@ -15,6 +15,7 @@ namespace MenAtWork\NewsMostReadBundle\EventListener;
 
 use Contao\ModuleNews;
 use Contao\NewsModel;
+use Doctrine\DBAL\Connection;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 
@@ -31,13 +32,23 @@ class NewsListener
     private $newsReadCountService;
 
     /**
+     * @var Connection
+     */
+    private $databaseConnection;
+
+    /**
      * NewsListener constructor.
      *
      * @param NewsReadCountService $newsReadCountService
+     *
+     * @param Connection           $databaseConnection
      */
-    public function __construct(NewsReadCountService $newsReadCountService)
-    {
+    public function __construct(
+        NewsReadCountService $newsReadCountService,
+        Connection $databaseConnection
+    ) {
         $this->newsReadCountService = $newsReadCountService;
+        $this->databaseConnection   = $databaseConnection;
     }
 
     /**
@@ -110,5 +121,33 @@ class NewsListener
 
         // store news id in session bag
         $this->newsReadCountService->add($row['id']);
+    }
+
+    /**
+     * Reset the counter of all news.
+     *
+     * Search for all news, where the 'd_read_count_reset' is not the
+     * same like the current id of the date (php: date('w')).
+     *
+     * For this entires, set the last reset to the current day and
+     * set the value of this date to 0.
+     *
+     * @return void
+     */
+    public function onHourly(): void
+    {
+        $currentDayId       = \date('w');
+        $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
+
+        $this->databaseConnection
+            ->createQueryBuilder()
+            ->update('tl_news')
+            ->set('d_read_count_reset', '?date')
+            ->set($countDayColumnName, 0)
+            ->where('d_read_count_reset != ?date')
+            ->setParameter('?date', $currentDayId)
+            ->execute();
+
+        \var_dump(123);
     }
 }
