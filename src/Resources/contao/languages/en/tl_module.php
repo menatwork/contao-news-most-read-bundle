@@ -11,7 +11,11 @@
  * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
-$GLOBALS['TL_LANG']['tl_module']['news_displayMostRead'] = [
-    'Sortieren nach meist gelesen.',
-    'Wenn aktiviert, wird die Liste nach den meist gelesen Nachrichten, absteigend sortiert.'
+$GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_mode']    = [
+    'Sort by most readed',
+    'If active the system will sort by the most readed or daily readed.'
+];
+$GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_options'] = [
+    1 => 'Most readed',
+    2 => 'Most daily readed'
 ];

@@ -64,13 +64,19 @@ class NewsListener
      */
     public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
-        if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
+        if ($objModule->type !== 'newslist' || empty($objModule->news_displayMostRead_mode)) {
             return false;
         }
 
-        $news = \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
-            'order' => 'read_count desc, tl_news.date desc',
-        ]);
+        if ($objModule->news_displayMostRead_mode == 1) {
+            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+                'order' => 'read_count desc, tl_news.date desc',
+            ]);
+        } elseif ($objModule->news_displayMostRead_mode == 2) {
+            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+                'order' => 'dT_read_count desc, tl_news.date desc',
+            ]);
+        }
 
         return $news;
     }
@@ -117,7 +123,17 @@ class NewsListener
         // Set the new 7 day value.
         $newsModel->$countDayColumnName = ++$newsModel->$countDayColumnName;
 
+        // Add total count.
+        $total = 0;
+        for ($i = 0; $i < 7; $i++) {
+            $column = \sprintf('d%s_read_count', $i);
+            $total  += (int)$newsModel->$column;
+        }
+        $newsModel->dT_read_count = $total;
+
         $newsModel->save();
+
+        $this->updateTotalDailyCount($newsModel->id);
 
         // store news id in session bag
         $this->newsReadCountService->add($row['id']);
@@ -148,6 +164,38 @@ class NewsListener
             ->setParameter('?date', $currentDayId)
             ->execute();
 
-        \var_dump(123);
+        $this->updateTotalDailyCount();
+    }
+
+    /**
+     * Update the total count.
+     */
+    public function updateTotalDailyCount($id = null)
+    {
+        $queryBuilder = $this
+            ->databaseConnection
+            ->createQueryBuilder()
+            ->update('tl_news')
+            ->set(
+                'dT_read_count',
+                '(
+                    d0_read_count 
+                    + d1_read_count 
+                    + d2_read_count 
+                    + d3_read_count 
+                    + d4_read_count 
+                    + d5_read_count 
+                    + d6_read_count 
+                    + d7_read_count
+                )'
+            );
+
+        if ($id !== null) {
+            $queryBuilder
+                ->where('id', '?id')
+                ->setParameter('id', $id);
+        }
+
+        $queryBuilder->execute();
     }
 }
