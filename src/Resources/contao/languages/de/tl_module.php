@@ -12,11 +12,11 @@
  */
 
 $GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_mode'] = [
-    'Sortieren nach meist gelesen.',
-    'Wenn aktiviert, wird die Liste nach den meist gelesen Nachrichten, absteigend sortiert.'
+    'Sortieren nach Aufrufen',
+    'Wenn aktiviert, wird die Liste nach der Anzahl der Aufrufe sortiert (absteigend).'
 ];
 
 $GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_options'] = [
-    1 => 'Meist gelesenen',
-    2 => 'Meist gelesenen der letzten 7 Tage'
+    1 => 'Meiste Aufrufe',
+    2 => 'Meiste Aufrufe der letzten 7 Tage'
 ];
