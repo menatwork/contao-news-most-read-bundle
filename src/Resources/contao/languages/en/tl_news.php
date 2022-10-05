@@ -12,21 +12,6 @@
  * @author     Mathis Völkert <mvoelkert@kiwi.de>
  */
 
-$GLOBALS['TL_LANG']['tl_news']['read_count_legend']  = 'Read Counter';
-$GLOBALS['TL_LANG']['tl_news']['read_count']         = ['Count', 'Count how often the article was read.'];
-$GLOBALS['TL_LANG']['tl_news']['d_read_count']       = [
-    'Daily Count',
-    'Count how often the article was read.'
-];
-$GLOBALS['TL_LANG']['tl_news']['d_read_count_reset'] = [
-    'Last reset of the daily count',
-    'Information when the last reset was.'
-];
-$GLOBALS['TL_LANG']['tl_news']['dT_read_count']      = [
-    '7 day count',
-    'Here you can see the total count of the 7 days.'
-];
-
 $GLOBALS['TL_LANG']['tl_news']['read_count_legend'] = 'Read counter';
 $GLOBALS['TL_LANG']['tl_news']['read_count'] = ['Views', 'This is the total count of views for this article.'];
 $GLOBALS['TL_LANG']['tl_news']['d_read_count_reset'] = ['Last reset', 'Shows the number of days since the counter was last reset.'];
