@@ -9,13 +9,14 @@
  *
  * @author     Sven Meierhans <meierhans@men-at-work.de>
  * @author     Stefan Heimes <heimes@men-at-work.de>
+ * @author     Mathis Völkert <mvoelkert@kiwi.de>
  */
 
 $GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_mode']    = [
-    'Sort by most readed',
-    'If active the system will sort by the most readed or daily readed.'
+    'Sort by views',
+    'If active the system will sort by views (descending).'
 ];
 $GLOBALS['TL_LANG']['tl_module']['news_displayMostRead_options'] = [
-    1 => 'Most readed',
-    2 => 'Most daily readed'
+    1 => 'Most views',
+    2 => 'Most views in the last 7 days'
 ];
