@@ -39,5 +39,11 @@
       "src/Resources/contao/languages/",
       "src/Resources/contao/templates/"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": true,
+      "contao/manager-plugin": true
+    }
   }
 }
