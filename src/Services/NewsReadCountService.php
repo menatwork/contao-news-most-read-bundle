@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class NewsReadCountService
 {
 
-    private $session;
+    private Session $session;
 
-    const NEWS_COUNT_SESSION_BAG = 'news_count_session_bag';
+    public const NEWS_COUNT_SESSION_BAG = 'news_count_session_bag';
 
     public function __construct(Session $session)
     {
@@ -28,7 +28,7 @@ class NewsReadCountService
     /**
      * Adds a news id to the session bag which stores all news id's read in this current session.
      *
-     * @param int $item The news model id.
+     * @param int $newsId The news model id.
      *
      * @return bool Returns true, if the entry was added successfully.
      */

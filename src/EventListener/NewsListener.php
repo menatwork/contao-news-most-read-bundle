@@ -11,6 +11,7 @@
 namespace MenAtWork\NewsMostReadBundle\EventListener;
 
 
+use Contao\Model\Collection;
 use Contao\ModuleNews;
 use Contao\NewsModel;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -19,7 +20,7 @@ use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 class NewsListener
 {
 
-    private $newsReadCountService;
+    private NewsReadCountService $newsReadCountService;
 
     public function __construct(NewsReadCountService $newsReadCountService)
     {
@@ -31,23 +32,21 @@ class NewsListener
      *
      * @param array      $newsArchives The news archive.
      * @param boolean    $blnFeatured  If true, return only featured news, if false, return only unfeatured news.
-     * @param integer    $intLimit     An optional limit.
-     * @param integer    $intOffset    An optional offset.
+     * @param integer    $limit     An optional limit.
+     * @param integer    $offset    An optional offset.
      * @param ModuleNews $objModule    The news module object.
      *
-     * @return \Contao\Model\Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     * @return Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
      */
     public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
         if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
-            return false;
+            return null;
         }
 
-        $news = \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+        return NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
             'order' => 'read_count desc, tl_news.date desc',
         ]);
-
-        return $news;
     }
 
     /**
@@ -77,6 +76,11 @@ class NewsListener
 
         // increment news counter
         $newsModel             = NewsModel::findById($row['id']);
+
+        if (null === $newsModel) {
+            return;
+        }
+
         $newsModel->read_count = ++$newsModel->read_count;
         $newsModel->save();
 

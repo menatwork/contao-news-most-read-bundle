@@ -11,17 +11,20 @@
 /**
  * Extend palettes
  */
-\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-    ->addLegend('read_count_legend', 'publish_legend', \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER)
+
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
+PaletteManipulator::create()
+    ->addLegend('read_count_legend', 'publish_legend', PaletteManipulator::POSITION_AFTER)
     ->addField(
         [ 'read_count' ],
         'read_count_legend',
-        \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND
+        PaletteManipulator::POSITION_APPEND
     )
     ->applyToPalette('default', 'tl_news');
 
 /**
- * Add DCA field to track read count..
+ * Add DCA field to track read count...
  */
 $GLOBALS['TL_DCA']['tl_news']['fields']['read_count'] = [
     'label'     => &$GLOBALS['TL_LANG']['tl_news']['read_count'],

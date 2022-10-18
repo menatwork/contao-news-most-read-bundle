@@ -11,11 +11,14 @@
 /**
  * Extend palettes
  */
-\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
+
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
+PaletteManipulator::create()
     ->addField(
         [ 'news_displayMostRead' ],
         'config_legend',
-        \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_PREPEND
+        PaletteManipulator::POSITION_PREPEND
     )
     ->applyToPalette('newslist', 'tl_module');
 
