@@ -36,12 +36,12 @@ class NewsListener
      * @param integer    $offset    An optional offset.
      * @param ModuleNews $objModule    The news module object.
      *
-     * @return Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     * @return Collection|NewsModel[]|NewsModel|false|null A collection of models or null if there are no news
      */
     public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
         if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
-            return null;
+            return false;
         }
 
         return NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
