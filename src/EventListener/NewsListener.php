@@ -6,17 +6,17 @@
  * Created by MEN AT WORK Werbeagentur GmbH
  *
  * @copyright  MEN AT WORK Werbeagentur GmbH 2018
+ *
  * @author     Sven Meierhans <meierhans@men-at-work.de>
  * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
 namespace MenAtWork\NewsMostReadBundle\EventListener;
 
-use Contao\Database;
 use Contao\ModuleNews;
 use Contao\NewsModel;
+use Doctrine\DBAL\Connection;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
-use MenAtWork\NewsMostReadBundle\Contao\Models\MostReadNewsModels;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 
 /**
@@ -32,13 +32,23 @@ class NewsListener
     private $newsReadCountService;
 
     /**
+     * @var Connection
+     */
+    private $databaseConnection;
+
+    /**
      * NewsListener constructor.
      *
      * @param NewsReadCountService $newsReadCountService
+     *
+     * @param Connection           $databaseConnection
      */
-    public function __construct(NewsReadCountService $newsReadCountService)
-    {
+    public function __construct(
+        NewsReadCountService $newsReadCountService,
+        Connection $databaseConnection
+    ) {
         $this->newsReadCountService = $newsReadCountService;
+        $this->databaseConnection   = $databaseConnection;
     }
 
     /**
@@ -143,14 +153,14 @@ class NewsListener
         $currentDayId       = \date('w');
         $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
 
-        $sql = \sprintf(
-            'UPDATE tl_news SET d_read_count_reset = ?, %s = 0 WHERE d_read_count_reset != ?',
-            $countDayColumnName
-        );
-
-        Database::getInstance()
-            ->prepare($sql)
-            ->execute([$currentDayId, $currentDayId]);
+        $this->databaseConnection
+            ->createQueryBuilder()
+            ->update('tl_news')
+            ->set('d_read_count_reset', '?date')
+            ->set($countDayColumnName, 0)
+            ->where('d_read_count_reset != ?date')
+            ->setParameter('?date', $currentDayId)
+            ->execute();
 
         $this->updateTotalDailyCount();
     }
@@ -160,25 +170,30 @@ class NewsListener
      */
     public function updateTotalDailyCount($id = null)
     {
-        $sql = <<<SQL
-UPDATE tl_news 
-SET dT_read_count = 
-    (
-        d0_read_count 
-        + d1_read_count 
-        + d2_read_count 
-        + d3_read_count 
-        + d4_read_count 
-        + d5_read_count 
-        + d6_read_count 
-        + d7_read_count
-    )
-SQL;
+        $queryBuilder = $this
+            ->databaseConnection
+            ->createQueryBuilder()
+            ->update('tl_news')
+            ->set(
+                'dT_read_count',
+                '(
+                    d0_read_count 
+                    + d1_read_count 
+                    + d2_read_count 
+                    + d3_read_count 
+                    + d4_read_count 
+                    + d5_read_count 
+                    + d6_read_count 
+                    + d7_read_count
+                )'
+            );
+
         if ($id !== null) {
-            $sql .= ' WHERE id = ?';
-            \Contao\Database::getInstance()->prepare($sql)->execute([$id]);
-        } else {
-            \Contao\Database::getInstance()->execute($sql);
+            $queryBuilder
+                ->where('id', '?id')
+                ->setParameter('id', $id);
         }
+
+        $queryBuilder->execute();
     }
 }

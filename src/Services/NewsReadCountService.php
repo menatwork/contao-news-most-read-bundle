@@ -1,26 +1,43 @@
 <?php
+
 /**
  * Contao - News most read bundle
  *
  * Created by MEN AT WORK Werbeagentur GmbH
  *
  * @copyright  MEN AT WORK Werbeagentur GmbH 2018
+ *
  * @author     Sven Meierhans <meierhans@men-at-work.de>
+ * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
 namespace MenAtWork\NewsMostReadBundle\Services;
 
-
 use Contao\Database;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+/**
+ * Class NewsReadCountService
+ *
+ * @package MenAtWork\NewsMostReadBundle\Services
+ */
 class NewsReadCountService
 {
-
+    /**
+     * @var Session
+     */
     private $session;
 
+    /**
+     * Session name.
+     */
     const NEWS_COUNT_SESSION_BAG = 'news_count_session_bag';
 
+    /**
+     * NewsReadCountService constructor.
+     *
+     * @param Session $session
+     */
     public function __construct(Session $session)
     {
         $this->session = $session;
