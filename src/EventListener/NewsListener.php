@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contao - News most read bundle
  *
@@ -6,21 +7,35 @@
  *
  * @copyright  MEN AT WORK Werbeagentur GmbH 2018
  * @author     Sven Meierhans <meierhans@men-at-work.de>
+ * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
 namespace MenAtWork\NewsMostReadBundle\EventListener;
 
-
+use Contao\Database;
 use Contao\ModuleNews;
 use Contao\NewsModel;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use MenAtWork\NewsMostReadBundle\Contao\Models\MostReadNewsModels;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 
+/**
+ * Class NewsListener
+ *
+ * @package MenAtWork\NewsMostReadBundle\EventListener
+ */
 class NewsListener
 {
-
+    /**
+     * @var NewsReadCountService
+     */
     private $newsReadCountService;
 
+    /**
+     * NewsListener constructor.
+     *
+     * @param NewsReadCountService $newsReadCountService
+     */
     public function __construct(NewsReadCountService $newsReadCountService)
     {
         $this->newsReadCountService = $newsReadCountService;
@@ -39,13 +54,19 @@ class NewsListener
      */
     public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
     {
-        if ($objModule->type !== 'newslist' || !$objModule->news_displayMostRead) {
+        if ($objModule->type !== 'newslist' || empty($objModule->news_displayMostRead_mode)) {
             return false;
         }
 
-        $news = \NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
-            'order' => 'read_count desc, tl_news.date desc',
-        ]);
+        if ($objModule->news_displayMostRead_mode == 1) {
+            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+                'order' => 'read_count desc, tl_news.date desc',
+            ]);
+        } elseif ($objModule->news_displayMostRead_mode == 2) {
+            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+                'order' => 'dT_read_count desc, tl_news.date desc',
+            ]);
+        }
 
         return $news;
     }
@@ -75,12 +96,89 @@ class NewsListener
             return;
         }
 
+        // Get the numeric value of the current day.
+        $currentDayId       = \date('w');
+        $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
+
         // increment news counter
         $newsModel             = NewsModel::findById($row['id']);
         $newsModel->read_count = ++$newsModel->read_count;
+
+        // Reset the value.
+        if ($newsModel->d_read_count_reset != $currentDayId) {
+            $newsModel->d_read_count_reset  = $currentDayId;
+            $newsModel->$countDayColumnName = 0;
+        }
+
+        // Set the new 7 day value.
+        $newsModel->$countDayColumnName = ++$newsModel->$countDayColumnName;
+
+        // Add total count.
+        $total = 0;
+        for ($i = 0; $i < 7; $i++) {
+            $column = \sprintf('d%s_read_count', $i);
+            $total  += (int)$newsModel->$column;
+        }
+        $newsModel->dT_read_count = $total;
+
         $newsModel->save();
 
         // store news id in session bag
         $this->newsReadCountService->add($row['id']);
+    }
+
+    /**
+     * Reset the counter of all news.
+     *
+     * Search for all news, where the 'd_read_count_reset' is not the
+     * same like the current id of the date (php: date('w')).
+     *
+     * For this entires, set the last reset to the current day and
+     * set the value of this date to 0.
+     *
+     * @return void
+     */
+    public function onHourly(): void
+    {
+        $currentDayId       = \date('w');
+        $countDayColumnName = \sprintf('d%s_read_count', $currentDayId);
+
+        $sql = \sprintf(
+            'UPDATE tl_news SET d_read_count_reset = ?, %s = 0 WHERE d_read_count_reset != ?',
+            $countDayColumnName
+        );
+
+        Database::getInstance()
+            ->prepare($sql)
+            ->execute([$currentDayId, $currentDayId]);
+
+        $this->updateTotalDailyCount();
+    }
+
+    /**
+     * Update the total count.
+     */
+    public function updateTotalDailyCount($id = null)
+    {
+        $sql = <<<SQL
+UPDATE tl_news 
+SET dT_read_count = 
+    (
+        d0_read_count 
+        + d1_read_count 
+        + d2_read_count 
+        + d3_read_count 
+        + d4_read_count 
+        + d5_read_count 
+        + d6_read_count 
+        + d7_read_count
+    )
+SQL;
+        if ($id !== null) {
+            $sql .= ' WHERE id = ?';
+            \Contao\Database::getInstance()->prepare($sql)->execute([$id]);
+        } else {
+            \Contao\Database::getInstance()->execute($sql);
+        }
     }
 }

@@ -11,6 +11,7 @@
 namespace MenAtWork\NewsMostReadBundle\Services;
 
 
+use Contao\Database;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class NewsReadCountService
@@ -37,7 +38,7 @@ class NewsReadCountService
         $newsRead = $this->session->get(self::NEWS_COUNT_SESSION_BAG);
 
         if ($newsRead === null) {
-            $this->session->set(self::NEWS_COUNT_SESSION_BAG, [ $newsId ]);
+            $this->session->set(self::NEWS_COUNT_SESSION_BAG, [$newsId]);
 
             return true;
         }
