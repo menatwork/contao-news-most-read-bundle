@@ -26,12 +26,12 @@ class NewsReadCountService
     /**
      * @var Session
      */
-    private $session;
+    private Session $session;
 
     /**
      * Session name.
      */
-    const NEWS_COUNT_SESSION_BAG = 'news_count_session_bag';
+    public const NEWS_COUNT_SESSION_BAG = 'news_count_session_bag';
 
     /**
      * NewsReadCountService constructor.
@@ -46,11 +46,11 @@ class NewsReadCountService
     /**
      * Adds a news id to the session bag which stores all news id's read in this current session.
      *
-     * @param int $item The news model id.
+     * @param int|string $newsId The news model id.
      *
      * @return bool Returns true, if the entry was added successfully.
      */
-    public function add($newsId)
+    public function add($newsId): bool
     {
         $newsRead = $this->session->get(self::NEWS_COUNT_SESSION_BAG);
 
@@ -73,11 +73,11 @@ class NewsReadCountService
     /**
      * Checks if a given news id exists in the current session bag.
      *
-     * @param int $newsId The news model id.
+     * @param int|string $newsId The news model id.
      *
      * @return bool True if the news model id already exists.
      */
-    public function hasItem($newsId)
+    public function hasItem($newsId): bool
     {
         $newsRead = $this->session->get(self::NEWS_COUNT_SESSION_BAG);
 

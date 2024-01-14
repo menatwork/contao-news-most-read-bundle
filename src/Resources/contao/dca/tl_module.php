@@ -11,14 +11,17 @@
  * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
 /**
  * Extend palettes
  */
-\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
+
+PaletteManipulator::create()
     ->addField(
         ['news_displayMostRead_mode'],
         'news_order',
-        \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE
+        PaletteManipulator::POSITION_BEFORE
     )
     ->applyToPalette('newslist', 'tl_module');
 

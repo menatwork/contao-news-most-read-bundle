@@ -13,9 +13,11 @@
 
 namespace MenAtWork\NewsMostReadBundle\EventListener;
 
+use Contao\Model\Collection;
 use Contao\ModuleNews;
 use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use MenAtWork\NewsMostReadBundle\Services\NewsReadCountService;
 
@@ -29,12 +31,12 @@ class NewsListener
     /**
      * @var NewsReadCountService
      */
-    private $newsReadCountService;
+    private NewsReadCountService $newsReadCountService;
 
     /**
      * @var Connection
      */
-    private $databaseConnection;
+    private Connection $databaseConnection;
 
     /**
      * NewsListener constructor.
@@ -56,24 +58,29 @@ class NewsListener
      *
      * @param array      $newsArchives The news archive.
      * @param boolean    $blnFeatured  If true, return only featured news, if false, return only unfeatured news.
-     * @param integer    $intLimit     An optional limit.
-     * @param integer    $intOffset    An optional offset.
+     * @param int        $limit        An optional limit.
+     * @param int        $offset       An optional offset.
      * @param ModuleNews $objModule    The news module object.
      *
-     * @return \Contao\Model\Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     * @return Collection|array|bool|NewsModel|null A collection of models or null if there are no news
      */
-    public function onNewsListFetchItems($newsArchives, $blnFeatured, $limit, $offset, $objModule)
-    {
+    public function onNewsListFetchItems(
+        $newsArchives,
+        $blnFeatured,
+        $limit,
+        $offset,
+        $objModule
+    ): Collection|array|bool|NewsModel|null {
         if ($objModule->type !== 'newslist' || empty($objModule->news_displayMostRead_mode)) {
             return false;
         }
 
         if ($objModule->news_displayMostRead_mode == 1) {
-            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+            $news = NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
                 'order' => 'read_count desc, tl_news.date desc',
             ]);
         } elseif ($objModule->news_displayMostRead_mode == 2) {
-            $news = \Contao\NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
+            $news = NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, [
                 'order' => 'dT_read_count desc, tl_news.date desc',
             ]);
         }
@@ -88,7 +95,7 @@ class NewsListener
      * @param $row
      * @param $objModuleNews
      */
-    public function onParseArticles($objTemplate, $row, $objModuleNews)
+    public function onParseArticles($objTemplate, $row, $objModuleNews): void
     {
         // Check if the current module is a reader
         if ($objModuleNews->type !== 'newsreader') {
@@ -147,6 +154,8 @@ class NewsListener
      * set the value of this date to 0.
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function onHourly(): void
     {
@@ -160,7 +169,7 @@ class NewsListener
             ->set($countDayColumnName, 0)
             ->where('d_read_count_reset != ?date')
             ->setParameter('?date', $currentDayId)
-            ->execute();
+            ->executeStatement();
 
         $this->updateTotalDailyCount();
     }
@@ -168,7 +177,7 @@ class NewsListener
     /**
      * Update the total count.
      */
-    public function updateTotalDailyCount($id = null)
+    public function updateTotalDailyCount($id = null): void
     {
         $queryBuilder = $this
             ->databaseConnection
@@ -194,6 +203,6 @@ class NewsListener
                 ->setParameter('id', $id);
         }
 
-        $queryBuilder->execute();
+        $queryBuilder->executeStatement();
     }
 }

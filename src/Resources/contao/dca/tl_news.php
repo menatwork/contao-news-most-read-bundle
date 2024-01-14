@@ -11,12 +11,13 @@
  * @author     Stefan Heimes <heimes@men-at-work.de>
  */
 
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
+
 /**
  * Extend palettes
  */
-\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-    ->addLegend('read_count_legend', 'publish_legend',
-        \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER)
+PaletteManipulator::create()
+    ->addLegend('read_count_legend', 'publish_legend',PaletteManipulator::POSITION_AFTER)
     ->addField(
         [
             'read_count',
@@ -32,7 +33,7 @@
             'd7_read_count',
         ],
         'read_count_legend',
-        \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND
+        PaletteManipulator::POSITION_APPEND
     )
     ->applyToPalette('default', 'tl_news');
 
