@@ -15,7 +15,7 @@
     "php": "^7.4 || ^8.0",
     "contao/news-bundle": "^4.4",
     "jaybizzle/crawler-detect": "^1.2",
-    "contao/core-bundle": "4.4.*"
+    "contao/core-bundle": "^4.4"
   },
   "conflict": {
     "contao/core": "*"
