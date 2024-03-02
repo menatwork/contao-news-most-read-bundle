@@ -119,6 +119,11 @@ class NewsListener
 
         // increment news counter
         $newsModel             = NewsModel::findById($row['id']);
+
+        if (null === $newsModel) {
+            return;
+        }
+
         $newsModel->read_count = ++$newsModel->read_count;
 
         // Reset the value.
